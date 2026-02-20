@@ -21,6 +21,29 @@ SELECT A.NAME,A.BIOGRAPHY FROM ARTISTS A
     JOIN SALES S ON s.album=al.id_album 
 GROUP BY A.NAME,A.BIOGRAPHY,AL.title HAVING SUM(s.quantity)>10; --6
 
+SELECT G.NAME, AVG(AL.PRICE) AS PRECIOMEDIO FROM ALBUMS AL 
+    JOIN GENRES G ON al.genre=g.id_genre 
+GROUP BY G.NAME 
+ORDER BY PRECIOMEDIO; --7
+
+SELECT C.NAME, C.SURNAME FROM customers C 
+    LEFT JOIN SALES S ON c.id_customer=s.customer 
+WHERE S.CUSTOMER IS NULL; --8
+
+SELECT al.title, al.genre FROM ALBUMS AL 
+    LEFT JOIN SALES S ON al.id_album=s.album 
+WHERE s.album IS NULL; --9
+
+SELECT A.NAME, a.country FROM ARTISTS A 
+    LEFT JOIN ALBUMS AL ON a.id_artist=al.artist 
+WHERE al.artist IS NULL; --10
+
+SELECT g.name, g.description FROM GENRES G 
+    LEFT JOIN ALBUMS AL ON g.id_genre=al.genre 
+WHERE al.artist IS NULL; --11
+
+
+
 --1: Mostra els noms i llinatges dels clients que hagin comprat algun album dels Beatles
 
 --2: Mostra el nom i el preu dels àlbums amb un estoc inferior a 10
