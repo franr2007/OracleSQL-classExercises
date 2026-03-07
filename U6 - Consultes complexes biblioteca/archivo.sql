@@ -63,18 +63,50 @@ WHERE UPPER(A.NACIONALITAT) = 'ESP';
 
 --10. Llista els títols, el gènere (nom) i l'autor (nom i llinatges) de cada llibre. (Si un llibre té més d'un autor o gènere, el seu títol sortirà repetit). Mostra només els que tenen autor conegut i gènere.
 --Columnes: títol llibre, nom gènere, nom i llinatges autor
+SELECT L.TITOL, G.NOM, A.NOM, A.COGNOMS 
+FROM LLIBRE L 
+JOIN AUTOR_LLIBRE AL ON L.ID = AL.ID_LLIBRE 
+JOIN AUTOR A ON A.ID = AL.ID_AUTOR 
+JOIN LLIBRE_GENERE LG ON L.ID = LG.ID_LLIBRE 
+JOIN GENERE G ON G.NOM = LG.NOM_GENERE;
 
 --11. Repeteix la consulta anterior, però també han de poder sortir els llibres sense gènere ni autor.
 --Columnes: títol llibre, nom gènere, nom i llinatges autor
+SELECT L.TITOL, G.NOM, A.NOM, A.COGNOMS 
+FROM LLIBRE L 
+LEFT JOIN AUTOR_LLIBRE AL ON L.ID = AL.ID_LLIBRE 
+LEFT JOIN AUTOR A ON A.ID = AL.ID_AUTOR 
+LEFT JOIN LLIBRE_GENERE LG ON L.ID = LG.ID_LLIBRE 
+LEFT JOIN GENERE G ON G.NOM = LG.NOM_GENERE;
 
 --12. Llista els llibres (títol) amb més d'un autor.
 --Columnes: títol llibre
+SELECT L.TITOL 
+FROM LLIBRE L 
+JOIN AUTOR_LLIBRE AL ON L.ID = AL.ID_LLIBRE 
+GROUP BY L.TITOL 
+HAVING COUNT(AL.ID_AUTOR) > 1;
 
 --13. Llista el nombre d'exemplars totals de l'autor "Federico García Lorca".
 --Columnes: número d'exemplars
+SELECT SUM(L.EXEMPLARS) 
+FROM LLIBRE L 
+JOIN AUTOR_LLIBRE AL ON L.ID = AL.ID_LLIBRE 
+JOIN AUTOR A ON A.ID = AL.ID_AUTOR 
+WHERE A.NOM = 'Federico' AND A.COGNOMS = 'García Lorca';
 
 --14. Llista el nombre d'exemplars totals de cada autor. Si un autor no té cap llibre (i per tant, exemplars), ha de sortir un 0.
 --Columnes: nom i llinatges autor, número d'exemplars total
+SELECT A.NOM, A.COGNOMS, NVL(SUM(L.EXEMPLARS), 0)
+FROM AUTOR A
+LEFT JOIN AUTOR_LLIBRE AL ON A.ID = AL.ID_AUTOR
+LEFT JOIN LLIBRE L ON L.ID = AL.ID_LLIBRE
+GROUP BY A.NOM, A.COGNOMS;
 
 --15. Llista el primer i darrer any en que va treure un llibre cada autor, només d'aquells autors que tenen llibres.
 --Columnes: nom i llinatges autor, primer any de llançament d'un llibre, darrer any de llançament d'un llibre
+SELECT A.NOM, A.COGNOMS, MIN(L.AN) AS PrimerLlancament, MAX(L.AN) AS DarrerLlancament 
+FROM AUTOR A 
+JOIN AUTOR_LLIBRE AL ON A.ID = AL.ID_AUTOR 
+JOIN LLIBRE L ON L.ID = AL.ID_LLIBRE
+GROUP BY A.NOM, A.COGNOMS;
