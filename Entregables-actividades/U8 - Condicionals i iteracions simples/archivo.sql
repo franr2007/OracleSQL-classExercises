@@ -1,0 +1,43 @@
+--1
+DECLARE
+v_IdLlibre NUMBER :=13;
+v_IdSequela NUMBER;
+v_titol varchar(50);
+BEGIN
+SELECT ID_SEQUELA_DE INTO v_IdSequela FROM LLIBRE WHERE ID=v_IdLlibre;
+SELECT TITOL INTO v_titol FROM LLIBRE WHERE ID=v_IdLlibre;
+IF v_IdSequela IS NULL THEN DBMS_OUTPUT.PUT_LINE(v_titol || ' no es sequela de ningun otro libro.');
+ELSE DBMS_OUTPUT.PUT_LINE(v_titol || ' es sequela de ningun otro libro.');
+END IF;
+END;
+
+--2
+DECLARE
+v_llibre NUMBER:=1;
+v_numEx NUMBER;
+v_addEx NUMBER:=4;
+BEGIN
+FOR i in 1..v_addEx LOOP
+UPDATE LLIBRE SET EXEMPLARS = exemplars + 1 WHERE ID = v_llibre;
+SELECT EXEMPLARS INTO v_numEx FROM LLIBRE WHERE ID = v_llibre;
+DBMS_OUTPUT.PUT_LINE('ADDED EXEMPLPAR. EXEMPLARS: '|| v_numEx);
+END LOOP;
+DBMS_OUTPUT.PUT_LINE('EXEMPLARS FINALS: '|| v_numEx);
+END;
+
+--3
+DECLARE
+v_llibre NUMBER:=1;
+v_numEx NUMBER;
+v_addEx NUMBER:=4;
+BEGIN
+SELECT EXEMPLARS INTO v_numEx FROM LLIBRE WHERE ID = v_llibre;
+FOR i in 1..v_addEx LOOP
+IF v_numEx = 0 THEN EXIT;
+END IF;
+UPDATE LLIBRE SET EXEMPLARS = exemplars - 1 WHERE ID = v_llibre;
+SELECT EXEMPLARS INTO v_numEx FROM LLIBRE WHERE ID = v_llibre;
+DBMS_OUTPUT.PUT_LINE('REMOVED EXEMPLPAR. EXEMPLARS: '|| v_numEx);
+END LOOP;
+DBMS_OUTPUT.PUT_LINE('EXEMPLARS FINALS: '|| v_numEx);
+END;
