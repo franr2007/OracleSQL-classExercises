@@ -1,0 +1,83 @@
+-- 1. Funció GET_JOB_TITLE:
+-- Aquesta funció rep el FIRST_NAME i LAST_NAME d’un empleat
+-- i retorna el seu JOB_TITLE des de la taula EMPLOYEES.
+-- Utilitza un SELECT INTO per obtenir el valor i el retorna amb RETURN.
+DECLARE
+    V_NOMBRE VARCHAR2(20):='Willow';
+    V_APELLIDO VARCHAR2(20):='Reyes';
+    
+    FUNCTION GET_JOB_TITLE(P_FIRST_NAME VARCHAR2,P_LAST_NAME VARCHAR2)
+        RETURN EMPLOYEES.JOB_TITLE%TYPE
+        IS 
+        V_JOB_TITLE VARCHAR2(50);
+        BEGIN
+            SELECT JOB_TITLE INTO V_JOB_TITLE FROM EMPLOYEES WHERE first_name=P_FIRST_NAME AND last_name=P_LAST_NAME;
+            RETURN V_JOB_TITLE;
+        END GET_JOB_TITLE;
+BEGIN
+    DBMS_OUTPUT.PUT_LINE(GET_JOB_TITLE(V_NOMBRE,V_APELLIDO));
+END;
+
+-- 2. Procediment GET_CONTACT_INFO:
+-- Aquest procediment rep el FIRST_NAME i LAST_NAME d’un empleat
+-- i retorna el seu EMAIL i PHONE_NUMBER utilitzant paràmetres OUT.
+-- El SELECT INTO assigna els valors als paràmetres de sortida.
+DECLARE
+    V_EMAIL VARCHAR2(50);
+    V_PHONE VARCHAR2(50);
+
+    PROCEDURE GET_CONTACT_INFO( P_FIRST_NAME VARCHAR2, P_LAST_NAME VARCHAR2, P_EMAIL OUT EMPLOYEES.EMAIL%TYPE, P_PHONE OUT EMPLOYEES.PHONE%TYPE)
+    IS
+    BEGIN
+        SELECT EMAIL, PHONE
+        INTO P_EMAIL, P_PHONE
+        FROM EMPLOYEES
+        WHERE FIRST_NAME = P_FIRST_NAME
+        AND LAST_NAME  = P_LAST_NAME;
+    END;
+
+BEGIN
+    GET_CONTACT_INFO('Blake', 'Cooper', V_EMAIL, V_PHONE);
+
+    DBMS_OUTPUT.PUT_LINE('Email: ' || V_EMAIL);
+    DBMS_OUTPUT.PUT_LINE('Phone: ' || V_PHONE);
+END;
+
+-- 3. Bloc anònim:
+-- Aquest bloc utilitza la funció GET_JOB_TITLE i el procediment GET_CONTACT_INFO
+-- per obtenir la informació de l’empleat “Blake Cooper”.
+-- Primer obté el JOB_TITLE amb la funció i després el EMAIL i PHONE_NUMBER
+-- amb el procediment. Finalment mostra els resultats amb DBMS_OUTPUT.PUT_LINE.
+
+DECLARE
+    V_NOMBRE VARCHAR2(20):='Blake';
+    V_APELLIDO VARCHAR2(20):='Cooper';
+    V_EMAIL VARCHAR2(50);
+    V_PHONE VARCHAR2(50);
+
+    FUNCTION GET_JOB_TITLE(P_FIRST_NAME VARCHAR2,P_LAST_NAME VARCHAR2)
+        RETURN EMPLOYEES.JOB_TITLE%TYPE
+        IS 
+        V_JOB_TITLE VARCHAR2(50);
+        BEGIN
+            SELECT JOB_TITLE INTO V_JOB_TITLE FROM EMPLOYEES WHERE first_name=P_FIRST_NAME AND last_name=P_LAST_NAME;
+            RETURN V_JOB_TITLE;
+        END GET_JOB_TITLE;
+
+    PROCEDURE GET_CONTACT_INFO( P_FIRST_NAME VARCHAR2, P_LAST_NAME VARCHAR2, P_EMAIL OUT EMPLOYEES.EMAIL%TYPE, P_PHONE OUT EMPLOYEES.PHONE%TYPE)
+    IS
+    BEGIN
+        SELECT EMAIL, PHONE
+        INTO P_EMAIL, P_PHONE
+        FROM EMPLOYEES
+        WHERE FIRST_NAME = P_FIRST_NAME
+        AND LAST_NAME  = P_LAST_NAME;
+    END;
+
+BEGIN
+    GET_CONTACT_INFO(V_NOMBRE, V_APELLIDO, V_EMAIL, V_PHONE);
+
+    DBMS_OUTPUT.PUT_LINE(GET_JOB_TITLE(V_NOMBRE,V_APELLIDO));
+    DBMS_OUTPUT.PUT_LINE('Email: ' || V_EMAIL);
+    DBMS_OUTPUT.PUT_LINE('Phone: ' || V_PHONE);
+END;
